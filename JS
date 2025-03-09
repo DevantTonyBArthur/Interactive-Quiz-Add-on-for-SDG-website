@@ -1,0 +1,122 @@
+const questions = [
+    {
+        question: "What do plants need to live",
+        answers: [
+            { text: "Good soil, water and sunlight", correct: false },
+            { text: "The correct soil, water and sunlight", correct: true },
+            { text: "Soil and water", correct: false },
+            { text: "Soil", correct: false }
+        ]
+    },
+    {
+        question: "Whats the best soil for cactuses",
+        answers: [
+            { text: "Loamy soil", correct: false },
+            { text: "Clay soil", correct: false },
+            { text: "Sandy soil", correct: true },
+            { text: "Silt soil", correct: false }
+        ]
+    },
+    {
+        question: "How many times do you need to water your plants in a week",
+        answers: [
+            { text: "Cacti-once every 7-14 days and Flowering plants- 2-3 days", correct: true },
+            { text: "Cacti-once every 5-10 days and Flowering plants- 4-5 days", correct: false },
+            { text: "Cacti-once every 8-15 days and Flowering plants- 1-2 days", correct: false },
+            { text: "Cacti-once every 3-8 days and Flowering plants- 5-7 days", correct: false }
+        ]
+    },
+    {
+        question: "What nutrient is most important for plants",
+        answers: [
+            { text: "Nitrogen", correct: true },
+            { text: "Gold", correct: false },
+            { text: "Helium", correct: false },
+            { text: "Carbon", correct: false }
+        ]
+    },
+    {
+        question: "Which of the following is not essential to plant growth",
+        answers: [
+            { text: "Sunlight", correct: false },
+            { text: "Carbon Dioxide", correct: false },
+            { text: "Water", correct: false },
+            { text: "Rocks", correct: true }
+        ]
+    }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+
+const questionText = document.getElementById("question-text");
+const answerButtons = document.getElementById("answer-buttons");
+const nextButton = document.getElementById("next-btn");
+const prevButton = document.getElementById("prev-btn");
+const submitButton = document.getElementById("submit-btn");
+const scoreDisplay = document.getElementById("score");
+
+function startQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    nextButton.classList.remove("hidden");
+    prevButton.classList.add("hidden");
+    submitButton.classList.add("hidden");
+    scoreDisplay.classList.add("hidden");
+    showQuestion();
+}
+
+function showQuestion() {
+    resetState();
+    let currentQuestion = questions[currentQuestionIndex];
+    questionText.innerText = currentQuestion.question;
+
+    currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerText = answer.text;
+        button.classList.add("btn");
+        button.addEventListener("click", () => selectAnswer(answer.correct, button));
+        answerButtons.appendChild(button);
+    });
+
+    prevButton.classList.toggle("hidden", currentQuestionIndex === 0);
+    nextButton.classList.toggle("hidden", currentQuestionIndex === questions.length - 1);
+    submitButton.classList.toggle("hidden", currentQuestionIndex !== questions.length - 1);
+}
+
+function resetState() {
+    while (answerButtons.firstChild) {
+        answerButtons.removeChild(answerButtons.firstChild);
+    }
+}
+
+function selectAnswer(correct, button) {
+    if (correct) {
+        button.classList.add("correct");
+        score++;
+    } else {
+        button.classList.add("incorrect");
+    }
+
+    Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
+}
+
+nextButton.addEventListener("click", () => {
+    currentQuestionIndex++;
+    showQuestion();
+});
+
+prevButton.addEventListener("click", () => {
+    currentQuestionIndex--;
+    showQuestion();
+});
+
+submitButton.addEventListener("click", () => {
+    scoreDisplay.innerText = "Your score: "+score+ "/" +questions.length;
+    scoreDisplay.classList.remove("hidden");
+    nextButton.classList.add("hidden");
+    prevButton.classList.add("hidden");
+    submitButton.classList.add("hidden");
+});
+
+startQuiz();
